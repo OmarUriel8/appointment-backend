@@ -61,6 +61,7 @@ export class Service {
   @CreateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
+    select: false,
   })
   createdAt: Date;
 
@@ -68,11 +69,13 @@ export class Service {
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
+    select: false,
   })
   updatedAt: Date;
 
   @OneToMany(() => ServiceImage, (serviceImage) => serviceImage.service, {
     eager: true,
+    cascade: true,
   })
   images?: ServiceImage[];
 

@@ -6,12 +6,13 @@ import {
 } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Service } from './entities/service.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceImage } from './entities/service-image.entity';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { isUUID } from 'class-validator';
+import { UserRole } from 'src/user/enums/user-role.enum';
 
 @Injectable()
 export class ServiceService {
@@ -22,6 +23,7 @@ export class ServiceService {
     private readonly serviceRepository: Repository<Service>,
     @InjectRepository(ServiceImage)
     private readonly serviceImageRepository: Repository<ServiceImage>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(createServiceDto: CreateServiceDto) {
@@ -55,18 +57,22 @@ export class ServiceService {
     }
 
     const query = this.serviceRepository.createQueryBuilder('service');
-    if (serviceName !== '') {
-      query
-        .where(`LOWER(service.name) LIKE :name`, {
-          name: `%${serviceName.toLowerCase()}%`,
-        })
-        .getMany();
+    const role = UserRole.CLIENT;
+    if (role === UserRole.CLIENT) {
+      query.andWhere(`service.isActive = true`);
     }
-    const [services, serviceCount] = await this.serviceRepository.findAndCount({
-      where: where,
-      take: limit,
-      skip: offset,
-    });
+
+    if (serviceName !== '') {
+      query.andWhere(`LOWER(service.name) LIKE :name`, {
+        name: `%${serviceName.toLowerCase()}%`,
+      });
+    }
+
+    const [services, serviceCount] = await query
+      .leftJoinAndSelect('service.images', 'service_image')
+      .take(limit)
+      .skip(offset)
+      .getManyAndCount();
 
     return {
       total: serviceCount,
@@ -82,6 +88,7 @@ export class ServiceService {
     } else {
       const query = this.serviceRepository.createQueryBuilder('service');
       service = await query
+        .leftJoinAndSelect('service.images', 'service_image')
         .where(`LOWER(name) = :name OR LOWER(slug) = :slug`, {
           name: term.toLowerCase(),
           slug: term.toLowerCase(),
@@ -96,12 +103,50 @@ export class ServiceService {
     return service;
   }
 
-  update(id: string, updateServiceDto: UpdateServiceDto) {
-    return `This action updates a #${id} service`;
+  async update(id: string, updateServiceDto: UpdateServiceDto) {
+    const { images, ...toUpdate } = updateServiceDto;
+
+    const service = await this.serviceRepository.preload({ ...toUpdate, id });
+
+    if (!service) {
+      throw new BadRequestException(`Service with id ${id} not found`);
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      if (images) {
+        await queryRunner.manager.delete(ServiceImage, { service: { id } });
+
+        service.images = images.map((image) =>
+          this.serviceImageRepository.create({ url: image }),
+        );
+      }
+
+      await queryRunner.manager.save(service);
+
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
+      return this.findOne(id);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+
+      this.handleDBExceptions(error);
+    }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} service`;
+  async remove(id: string) {
+    try {
+      const service = await this.findOne(id);
+
+      service.isActive = false;
+      await this.serviceRepository.save(service);
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   private handleDBExceptions(error: any) {

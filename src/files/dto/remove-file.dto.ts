@@ -1,9 +1,11 @@
-import { IsString } from 'class-validator';
+import { IsString, IsUrl, IsUUID } from 'class-validator';
 
 export class RemovefileDto {
   @IsString()
-  id: string;
+  @IsUUID()
+  idImage: string;
 
   @IsString()
-  url: string;
+  @IsUrl()
+  urlImage: string;
 }
