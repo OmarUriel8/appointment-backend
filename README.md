@@ -32,8 +32,8 @@ http://localhost:3000/api/seed
 3. Ejecutar migracion
 
 ```
+  npm run migration:generate ./database/migrations/<name>
   npm run build
-  NAME=test npm run migration:generate
   npm run migration:run
 ```
 
@@ -41,7 +41,7 @@ se agregaron los scripts
 
 ```
 "typeorm": "ts-node -r dotenv/config -r tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ./datasource.ts",
-"migration:generate": "npm run typeorm -- migration:generate ./database/migrations/$NAME",
+"migration:generate": "npm run typeorm migration:generate",
 "migration:run": "npm run typeorm -- migration:run",
 "migration:revert": "npm run typeorm -- migration:revert"
 ```

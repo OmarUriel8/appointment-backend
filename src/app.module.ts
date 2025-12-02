@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { ServiceModule } from './service/service.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -17,7 +19,10 @@ import { ConfigModule } from '@nestjs/config';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       synchronize: false,
+      autoLoadEntities: true,
     }),
+    ServiceModule,
+    FilesModule,
   ],
   controllers: [],
   providers: [],

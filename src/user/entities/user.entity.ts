@@ -26,14 +26,15 @@ export class User {
 
   @Column({
     type: 'text',
+    nullable: true,
   })
-  phone: string;
+  phone?: string;
 
   @Column({
     type: 'text',
     select: false,
   })
-  pasword: string;
+  password: string;
 
   @Column({
     type: 'enum',

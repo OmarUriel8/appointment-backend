@@ -1,26 +1,137 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { isUUID } from 'class-validator';
+import { UserRole } from './enums/user-role.enum';
+import { UpdatePasswordDto } from './dto/update-pasword.dto';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  private readonly logger = new Logger('UserService');
+
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async create(createUserDto: CreateUserDto) {
+    try {
+      const { password, ...rest } = createUserDto;
+      const user = await this.userRepository.create({
+        ...rest,
+        password: bcrypt.hashSync(password, 10),
+        role: rest.role ? rest.role : UserRole.CLIENT,
+      });
+
+      await this.userRepository.save(user);
+
+      return {
+        user,
+      };
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0, role = 'all' } = paginationDto;
+
+    const where = role !== 'all' ? { role: role as UserRole } : {};
+
+    const [users, userCount] = await this.userRepository.findAndCount({
+      take: limit,
+      skip: offset,
+      where,
+      order: { email: 'asc' },
+    });
+
+    return {
+      total: userCount,
+      pages: Math.ceil(userCount / limit),
+      users,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(term: string) {
+    let user: User | null;
+    if (isUUID(term)) {
+      user = await this.userRepository.findOneBy({ id: term });
+    } else {
+      const query = this.userRepository.createQueryBuilder('user');
+
+      user = await query
+        .where(`LOWER(email) = :email`, { email: term.toLowerCase() })
+        .getOne();
+    }
+
+    if (!user) {
+      throw new BadRequestException(`User with term ${term} not found`);
+    }
+
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const { role, isActive, ...rest } = updateUserDto;
+    const user = await this.userRepository.preload({
+      ...rest,
+      id,
+    });
+
+    if (!user) {
+      throw new BadRequestException(`User with id ${id} not found`);
+    }
+
+    // if (userLogin.roles.includes(ValidRoles.admin)) {
+    user.role = role ?? user?.role;
+    user.isActive = isActive ?? user.isActive;
+    // }
+
+    await this.userRepository.save(user);
+
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    const user = await this.findOne(id);
+    try {
+      user!.isActive = false;
+      await this.userRepository.save(user);
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
+
+  async changePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
+    const user = await this.findOne(id);
+
+    try {
+      user!.password = bcrypt.hashSync(updatePasswordDto.password, 10);
+      this.userRepository.save(user!);
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
+
+  private handleDBExceptions(error: any) {
+    if (error.code === '23505') {
+      throw new BadRequestException(error.detail);
+    }
+
+    this.logger.error(error);
+    console.log(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 }
