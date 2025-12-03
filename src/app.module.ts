@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ServiceModule } from './service/service.module';
 import { FilesModule } from './files/files.module';
 import { EmployeeScheduleModule } from './employee-schedule/employee-schedule.module';
+import { AppointmentModule } from './appointment/appointment.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { EmployeeScheduleModule } from './employee-schedule/employee-schedule.mo
     ServiceModule,
     FilesModule,
     EmployeeScheduleModule,
+    AppointmentModule,
   ],
   controllers: [],
   providers: [],

@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { UserRole } from '../enums/user-role.enum';
 import { EmployeeSchedule } from 'src/employee-schedule/entities/employee-schedule.entity';
+import { Appointment } from 'src/appointment/entities/appointment.entity';
 
 @Entity({
   name: 'user',
@@ -68,9 +69,14 @@ export class User {
   @OneToMany(
     () => EmployeeSchedule,
     (employeeSchedule) => employeeSchedule.employee,
-    { eager: true, cascade: true },
   )
   employeeSchedule?: EmployeeSchedule[];
+
+  @OneToMany(() => Appointment, (appointment) => appointment.client)
+  appointmentsAsClient?: Appointment[];
+
+  @OneToMany(() => Appointment, (appointment) => appointment.employee)
+  appointmentsAsEmployee?: Appointment[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {

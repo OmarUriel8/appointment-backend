@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ServiceImage } from './service-image.entity';
+import { Appointment } from 'src/appointment/entities/appointment.entity';
 
 @Entity({
   name: 'service',
@@ -72,6 +73,9 @@ export class Service {
     select: false,
   })
   updatedAt: Date;
+
+  @OneToMany(() => Appointment, (appointment) => appointment.service)
+  appointments?: Appointment[];
 
   @OneToMany(() => ServiceImage, (serviceImage) => serviceImage.service, {
     eager: true,
