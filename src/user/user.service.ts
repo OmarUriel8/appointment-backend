@@ -44,9 +44,20 @@ export class UserService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0, role = 'all' } = paginationDto;
+    const {
+      limit = 10,
+      offset = 0,
+      role = 'all',
+      isActive = null,
+    } = paginationDto;
 
-    const where = role !== 'all' ? { role: role as UserRole } : {};
+    let where = {} as any;
+    if (role !== 'all') {
+      where.role = role as UserRole;
+    }
+    if (isActive !== null) {
+      where.isActice = isActive;
+    }
 
     const [users, userCount] = await this.userRepository.findAndCount({
       take: limit,

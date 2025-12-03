@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { ServiceModule } from './service/service.module';
 import { FilesModule } from './files/files.module';
+import { EmployeeScheduleModule } from './employee-schedule/employee-schedule.module';
 
 @Module({
   imports: [
@@ -20,9 +21,11 @@ import { FilesModule } from './files/files.module';
       password: process.env.DB_PASSWORD,
       synchronize: false,
       autoLoadEntities: true,
+      entities: [__dirname + '/database/core/**/*.entity{.ts,.js}'],
     }),
     ServiceModule,
     FilesModule,
+    EmployeeScheduleModule,
   ],
   controllers: [],
   providers: [],

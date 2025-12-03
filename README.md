@@ -32,21 +32,20 @@ http://localhost:3000/api/seed
 3. Ejecutar migracion
 
 ```
-  npm run migration:generate ./database/migrations/<name>
-  npm run build
+  npm run migration:generate
   npm run migration:run
 ```
 
 se agregaron los scripts
 
 ```
-"typeorm": "ts-node -r dotenv/config -r tsconfig-paths/register ./node_modules/typeorm/cli.js --dataSource ./datasource.ts",
-"migration:generate": "npm run typeorm migration:generate",
-"migration:run": "npm run typeorm -- migration:run",
-"migration:revert": "npm run typeorm -- migration:revert"
+  "migration:generate": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate -d ./src/config/typeorm.config.ts ./src/database/migrations/migration",
+  "migration:create": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:create -d ./src/config/typeorm.config.ts ./src/database/migrations/migration",
+  "migration:run": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d ./src/config/typeorm.config.ts",
+  "migration:revert": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d ./src/config/typeorm.config.ts"
 ```
 
-se agrego archivo **datasource.ts**
+se agrego archivo **typeorm.config.ts**
 y se agrego libreria **dotenv y typeorm**
 
 ## Stack

@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEnum,
   IsIn,
   IsNumber,
@@ -25,5 +26,9 @@ export class PaginationDto {
 
   @IsString()
   @IsOptional()
-  serviceName: string;
+  serviceName?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 }

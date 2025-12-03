@@ -6,8 +6,10 @@ import {
   BeforeUpdate,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { UserRole } from '../enums/user-role.enum';
+import { EmployeeSchedule } from 'src/employee-schedule/entities/employee-schedule.entity';
 
 @Entity({
   name: 'user',
@@ -62,6 +64,13 @@ export class User {
     default: true,
   })
   isActive: boolean;
+
+  @OneToMany(
+    () => EmployeeSchedule,
+    (employeeSchedule) => employeeSchedule.employee,
+    { eager: true, cascade: true },
+  )
+  employeeSchedule?: EmployeeSchedule[];
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
