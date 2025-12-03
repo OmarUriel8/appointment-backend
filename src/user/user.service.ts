@@ -26,18 +26,17 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const { password, ...rest } = createUserDto;
+      const { password, ...restDto } = createUserDto;
       const user = await this.userRepository.create({
-        ...rest,
+        ...restDto,
         password: bcrypt.hashSync(password, 10),
-        role: rest.role ? rest.role : UserRole.CLIENT,
+        role: restDto.role ? restDto.role : UserRole.CLIENT,
       });
 
       await this.userRepository.save(user);
+      const { password: p, createdAt, updatedAt, ...rest } = user;
 
-      return {
-        user,
-      };
+      return { ...rest };
     } catch (error) {
       this.handleDBExceptions(error);
     }
@@ -74,14 +73,40 @@ export class UserService {
   }
 
   async findOne(term: string) {
+    const { password, ...user } = await this.findOneWithPassword(term);
+
+    return user;
+  }
+
+  async findOneWithPassword(term: string) {
     let user: User | null;
     if (isUUID(term)) {
-      user = await this.userRepository.findOneBy({ id: term });
+      user = await this.userRepository.findOne({
+        where: { id: term },
+        select: {
+          id: true,
+          email: true,
+          phone: true,
+          role: true,
+          isActive: true,
+          password: true,
+          name: true,
+        },
+      });
     } else {
       const query = this.userRepository.createQueryBuilder('user');
 
       user = await query
         .where(`LOWER(email) = :email`, { email: term.toLowerCase() })
+        .select([
+          'user.id',
+          'user.email',
+          'user.phone',
+          'user.role',
+          'user.isActive',
+          'user.password',
+          'user.name',
+        ])
         .getOne();
     }
 
@@ -124,7 +149,7 @@ export class UserService {
   }
 
   async changePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const user = await this.findOne(id);
+    const user = await this.findOneWithPassword(id);
 
     try {
       user!.password = bcrypt.hashSync(updatePasswordDto.password, 10);
