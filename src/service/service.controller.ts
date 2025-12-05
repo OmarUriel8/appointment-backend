@@ -12,12 +12,15 @@ import { ServiceService } from './service.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/auth/decorators';
+import { UserRole } from 'src/user/enums/user-role.enum';
 
 @Controller('service')
 export class ServiceController {
   constructor(private readonly serviceService: ServiceService) {}
 
   @Post()
+  @Auth(UserRole.ADMIN)
   create(@Body() createServiceDto: CreateServiceDto) {
     return this.serviceService.create(createServiceDto);
   }
@@ -33,6 +36,7 @@ export class ServiceController {
   }
 
   @Patch(':id')
+  @Auth(UserRole.ADMIN)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateServiceDto: UpdateServiceDto,
@@ -41,6 +45,7 @@ export class ServiceController {
   }
 
   @Delete(':id')
+  @Auth(UserRole.ADMIN)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.serviceService.remove(id);
   }

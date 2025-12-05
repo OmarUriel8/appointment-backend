@@ -4,10 +4,15 @@ import { EmployeeScheduleController } from './employee-schedule.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeSchedule } from './entities/employee-schedule.entity';
 import { UserModule } from 'src/user/user.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [EmployeeScheduleController],
   providers: [EmployeeScheduleService],
-  imports: [TypeOrmModule.forFeature([EmployeeSchedule]), UserModule],
+  imports: [
+    TypeOrmModule.forFeature([EmployeeSchedule]),
+    UserModule,
+    AuthModule,
+  ],
 })
 export class EmployeeScheduleModule {}

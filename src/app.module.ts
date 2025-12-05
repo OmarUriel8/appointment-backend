@@ -24,6 +24,11 @@ import { AuthModule } from './auth/auth.module';
       synchronize: false,
       autoLoadEntities: true,
       entities: [__dirname + '/database/core/**/*.entity{.ts,.js}'],
+      extra: {
+        // Esto le dice a PG que use esta zona horaria para formatear los timestamps
+        // al devolverlos al driver de Node.js.
+        timezone: process.env.TZ ?? 'UTC',
+      },
     }),
     ServiceModule,
     FilesModule,

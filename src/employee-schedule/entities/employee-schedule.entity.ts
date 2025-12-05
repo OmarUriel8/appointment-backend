@@ -17,6 +17,7 @@ export class EmployeeSchedule {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // lunes = 0, Domingo=6
   @Column({
     type: 'int',
   })

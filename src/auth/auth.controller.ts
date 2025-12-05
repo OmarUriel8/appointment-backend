@@ -22,7 +22,7 @@ export class AuthController {
 
   @Get('check-status')
   @Auth()
-  findAll(@GetUser() user: User) {
+  checkAuthStatus(@GetUser() user: User) {
     return this.authService.checkAuthStatus(user);
   }
 }

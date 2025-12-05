@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -49,11 +50,19 @@ export class ServiceService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { offset = 0, limit = 10, serviceName = '' } = paginationDto;
+    const {
+      offset = 0,
+      limit = 10,
+      serviceName = '',
+      isActive = null,
+    } = paginationDto;
 
     let where = {} as any;
     if (serviceName !== '') {
       where.name = serviceName;
+    }
+    if (isActive !== null) {
+      where.isActive = isActive;
     }
 
     const query = this.serviceRepository.createQueryBuilder('service');
@@ -97,7 +106,7 @@ export class ServiceService {
     }
 
     if (!service) {
-      throw new BadRequestException(`service with term ${term} not found`);
+      throw new NotFoundException(`service with term ${term} not found`);
     }
 
     return service;

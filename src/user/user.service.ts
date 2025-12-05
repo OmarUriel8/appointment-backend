@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -111,7 +112,7 @@ export class UserService {
     }
 
     if (!user) {
-      throw new BadRequestException(`User with term ${term} not found`);
+      throw new NotFoundException(`User with term ${term} not found`);
     }
 
     return user;
@@ -148,8 +149,8 @@ export class UserService {
     }
   }
 
-  async changePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const user = await this.findOneWithPassword(id);
+  async changePassword(term: string, updatePasswordDto: UpdatePasswordDto) {
+    const user = await this.findOneWithPassword(term);
 
     try {
       user!.password = bcrypt.hashSync(updatePasswordDto.password, 10);

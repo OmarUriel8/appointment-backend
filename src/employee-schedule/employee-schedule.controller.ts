@@ -11,6 +11,8 @@ import {
 import { EmployeeScheduleService } from './employee-schedule.service';
 import { CreateEmployeeScheduleDto } from './dto/create-employee-schedule.dto';
 import { UpdateEmployeeScheduleDto } from './dto/update-employee-schedule.dto';
+import { Auth } from 'src/auth/decorators';
+import { UserRole } from 'src/user/enums/user-role.enum';
 
 @Controller('employee-schedule')
 export class EmployeeScheduleController {
@@ -19,6 +21,7 @@ export class EmployeeScheduleController {
   ) {}
 
   @Post(':employeeId')
+  @Auth(UserRole.ADMIN)
   create(
     @Param('employeeId', ParseUUIDPipe) employeeId: string,
     @Body() createEmployeeScheduleDto: CreateEmployeeScheduleDto[],
@@ -30,11 +33,13 @@ export class EmployeeScheduleController {
   }
 
   @Get(':employeeId')
+  @Auth(UserRole.ADMIN, UserRole.EMPLOYEE)
   findOne(@Param('employeeId', ParseUUIDPipe) employeeId: string) {
     return this.employeeScheduleService.findOne(employeeId);
   }
 
   @Patch(':id')
+  @Auth(UserRole.ADMIN)
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateEmployeeScheduleDto: UpdateEmployeeScheduleDto,
@@ -43,6 +48,7 @@ export class EmployeeScheduleController {
   }
 
   @Delete(':id')
+  @Auth(UserRole.ADMIN)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.employeeScheduleService.remove(id);
   }

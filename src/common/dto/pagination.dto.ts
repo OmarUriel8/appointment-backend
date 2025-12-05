@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsDate,
   IsEnum,
   IsIn,
   IsNumber,
@@ -8,6 +9,7 @@ import {
   Min,
 } from 'class-validator';
 import { UserRole } from 'src/user/enums/user-role.enum';
+import { AppointmentStatus } from '../../appointment/enum/appointment-status.enum';
 
 export class PaginationDto {
   @IsNumber()
@@ -31,4 +33,12 @@ export class PaginationDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
+
+  @IsIn(['all', ...Object.keys(AppointmentStatus)])
+  @IsOptional()
+  appointmentStatus?: AppointmentStatus | 'all';
+
+  @IsDate()
+  @IsOptional()
+  appointmentDate?: Date;
 }
