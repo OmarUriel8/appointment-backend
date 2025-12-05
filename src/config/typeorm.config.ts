@@ -14,9 +14,17 @@ const AppDataSource = new DataSource({
   database: configService.get<string>('DB_NAME'),
   synchronize: false,
   entities: ['**/*.entity.ts'],
-  migrations: ['src/database/migrations/*-migration.ts'],
+  migrations:
+    process.env.STAGE === 'prod'
+      ? ['src/database/migrations-prod/*-migration.ts']
+      : ['src/database/migrations/*-migration.ts'],
   migrationsRun: false,
   logging: true,
+  extra: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
 });
 
 export default AppDataSource;

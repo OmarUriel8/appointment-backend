@@ -25,7 +25,7 @@ async function bootstrap() {
   );
 
   await app.listen(process.env.PORT ?? 3000);
-  logger.log(`Api running on port ${process.env.PORT}`);
+  logger.log(`Api running on port ${process.env.PORT || 3000}`);
   logger.log(`Zona horaria ${process.env.TZ} ${new Date()}`);
 }
 bootstrap();
