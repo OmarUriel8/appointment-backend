@@ -57,18 +57,24 @@ export class ServiceService {
       isActive = null,
     } = paginationDto;
 
-    let where = {} as any;
-    if (serviceName !== '') {
-      where.name = serviceName;
-    }
-    if (isActive !== null) {
-      where.isActive = isActive;
-    }
+    // let where = {} as any;
+    // if (serviceName !== '') {
+    //   where.name = serviceName;
+    // }
+    // if (isActive !== null) {
+    //   where.isActive = isActive;
+    // }
 
     const query = this.serviceRepository.createQueryBuilder('service');
-    const role = UserRole.CLIENT;
-    if (role === UserRole.CLIENT) {
-      query.andWhere(`service.isActive = true`);
+    // const role = UserRole.CLIENT;
+    // if (role === UserRole.CLIENT) {
+    //   query.andWhere(`service.isActive = true`);
+    // }
+
+    if (isActive !== null) {
+      query.andWhere(`service.isActive = :isActive`, {
+        isActive: isActive,
+      });
     }
 
     if (serviceName !== '') {

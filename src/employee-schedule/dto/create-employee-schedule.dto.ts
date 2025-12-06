@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNumber,
@@ -7,8 +8,10 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { ToBoolean } from 'src/common/decorators/to-boolean.decorator';
 
 export class CreateEmployeeScheduleDto {
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   @Max(6)
@@ -26,6 +29,7 @@ export class CreateEmployeeScheduleDto {
   })
   endTime: string;
 
+  @ToBoolean()
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;

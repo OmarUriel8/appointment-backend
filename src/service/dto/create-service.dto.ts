@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsNumber,
@@ -22,10 +23,12 @@ export class CreateServiceDto {
   @IsOptional()
   slug?: string;
 
+  @Type(() => Number)
   @IsNumber()
   @IsPositive()
   price: number;
 
+  @Type(() => Number)
   @IsNumber()
   @IsPositive()
   durationMinutes: number;
