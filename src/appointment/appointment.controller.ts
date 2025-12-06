@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
@@ -18,6 +19,7 @@ import { User } from 'src/user/entities/user.entity';
 import { ChangeStatusAppointmentDto } from './dto/change-status-appointment.dto';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { CancelAppointmentDto } from './dto/cancel-appointment.dto';
+import { TestimonialDto } from './dto/testimonial.dto';
 
 @Controller('appointment')
 export class AppointmentController {
@@ -57,6 +59,11 @@ export class AppointmentController {
   @Auth(UserRole.ADMIN)
   findAll(@Query() paginationDto: PaginationDto) {
     return this.appointmentService.findAll(paginationDto);
+  }
+
+  @Get('testimonials')
+  findTestimonials(@Query() testimonialDto: TestimonialDto) {
+    return this.appointmentService.findTestimonials(testimonialDto);
   }
 
   @Get(':id')

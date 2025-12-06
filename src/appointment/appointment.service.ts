@@ -10,7 +10,7 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Appointment } from './entities/appointment.entity';
-import { LessThan, MoreThan, Not, Repository } from 'typeorm';
+import { LessThan, MoreThan, Not, Raw, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { AppointmentStatus } from './enum/appointment-status.enum';
 import { ChangeStatusAppointmentDto } from './dto/change-status-appointment.dto';
@@ -21,6 +21,7 @@ import { UserService } from 'src/user/user.service';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { isUUID } from 'class-validator';
 import { CancelAppointmentDto } from './dto/cancel-appointment.dto';
+import { TestimonialDto } from './dto/testimonial.dto';
 
 @Injectable()
 export class AppointmentService {
@@ -327,6 +328,29 @@ export class AppointmentService {
     }
   }
 
+  async findTestimonials(testimonialDto: TestimonialDto) {
+    const { limit = 3 } = testimonialDto;
+
+    const testimonials = await this.appointmentRepository.find({
+      where: {
+        score: MoreThan(3),
+        comments: Raw((alias) => `LENGTH(${alias}) > 2`),
+      },
+      relations: ['client'],
+      take: limit,
+    });
+
+    if (!testimonials) {
+      return [];
+    }
+
+    return testimonials.map(({ client, comments, score, id }) => ({
+      id,
+      name: client.name,
+      comments,
+      score,
+    }));
+  }
   private async findOnePlane(id: number) {
     const appointment = await this.appointmentRepository.findOne({
       where: { id },
