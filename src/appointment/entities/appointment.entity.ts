@@ -46,6 +46,18 @@ export class Appointment {
   })
   notes: string;
 
+  @Column({
+    type: 'text',
+    default: '',
+  })
+  comments: string;
+
+  @Column({
+    type: 'float',
+    default: 0,
+  })
+  score: number;
+
   @CreateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',

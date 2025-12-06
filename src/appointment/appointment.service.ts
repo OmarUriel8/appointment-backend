@@ -170,7 +170,7 @@ export class AppointmentService {
     };
   }
 
-  async update(id: number, dto: UpdateAppointmentDto) {
+  async update(id: number, dto: UpdateAppointmentDto, user: User) {
     // 1. Obtener la cita actual
     const appointment = await this.findOne(id, null);
 
@@ -185,84 +185,93 @@ export class AppointmentService {
       throw new BadRequestException(`Client cannot be modified`);
     }
 
-    // 2. Preparar valores actualizados
-    const date = toLocalDate(dto.date ?? appointment.date);
-    const startTime = dto.startTime ?? appointment.startTime;
+    if (user.role === UserRole.CLIENT) {
+      appointment.notes = dto.notes ?? appointment.notes;
+      appointment.comments = dto.comments ?? appointment.comments;
+      appointment.score = dto.score ?? appointment.score;
+    } else {
+      // 2. Preparar valores actualizados
+      const date = toLocalDate(dto.date ?? appointment.date);
+      const startTime = dto.startTime ?? appointment.startTime;
 
-    // Validar que la nueva fecha no sea pasada
-    validateNotPast(date.toString(), startTime);
+      // Validar que la nueva fecha no sea pasada
+      validateNotPast(date.toString(), startTime);
 
-    const day = new Date(date).getDay();
+      const day = new Date(date).getDay();
 
-    // 3. Valida el estatus de la cita
-    if (dto.status && !this.validChangeStatus(appointment.status, dto.status)) {
-      throw new BadRequestException(
-        `The status ${appointment.status} can't change to ${status}`,
-      );
-    }
-
-    // 4. Obtener servicio (si cambia)
-    let service = appointment.service;
-
-    if (dto.serviceId && dto.serviceId !== appointment.service.id) {
-      service = await this.serviceService.findOne(dto.serviceId);
-
-      if (!service.isActive) {
+      // 3. Valida el estatus de la cita
+      if (
+        dto.status &&
+        !this.validChangeStatus(appointment.status, dto.status)
+      ) {
         throw new BadRequestException(
-          `Service ${service.name} not available at the moment}`,
+          `The status ${appointment.status} can't change to ${status}`,
         );
       }
-    }
 
-    // 5. Calcular nuevo endTime en base al *servicio actual o nuevo*
-    const endTime = addMinutes(startTime, service.durationMinutes);
+      // 4. Obtener servicio (si cambia)
+      let service = appointment.service;
 
-    // 6. Obtener empleado (si cambia o si se envía uno nuevo)
-    let employee = appointment.employee;
+      if (dto.serviceId && dto.serviceId !== appointment.service.id) {
+        service = await this.serviceService.findOne(dto.serviceId);
 
-    if (dto.employeeId && dto.employeeId !== appointment.employee.id) {
-      employee = (await this.userService.findOne(dto.employeeId)) as User;
-    }
+        if (!service.isActive) {
+          throw new BadRequestException(
+            `Service ${service.name} not available at the moment}`,
+          );
+        }
+      }
 
-    // 7. Validar horario del empleado
-    const within = await this.isWithinSchedule(
-      employee,
-      startTime,
-      endTime,
-      day,
-    );
+      // 5. Calcular nuevo endTime en base al *servicio actual o nuevo*
+      const endTime = addMinutes(startTime, service.durationMinutes);
 
-    if (!within) {
-      throw new BadRequestException(
-        `Employee not available for appointment (${startTime} - ${endTime})`,
+      // 6. Obtener empleado (si cambia o si se envía uno nuevo)
+      let employee = appointment.employee;
+
+      if (dto.employeeId && dto.employeeId !== appointment.employee.id) {
+        employee = (await this.userService.findOne(dto.employeeId)) as User;
+      }
+
+      // 7. Validar horario del empleado
+      const within = await this.isWithinSchedule(
+        employee,
+        startTime,
+        endTime,
+        day,
       );
+
+      if (!within) {
+        throw new BadRequestException(
+          `Employee not available for appointment (${startTime} - ${endTime})`,
+        );
+      }
+
+      // 8. Validar conflictos (IMPORTANTE: ignorar esta misma cita)
+      const conflict = await this.appointmentRepository.findOne({
+        where: {
+          employee: { id: employee.id },
+          date: date,
+          startTime: LessThan(endTime),
+          endTime: MoreThan(startTime),
+          id: Not(id), // ← evita chocar consigo misma
+        },
+      });
+
+      if (conflict) {
+        throw new BadRequestException(
+          `Employee not available for appointment (${startTime} - ${endTime})`,
+        );
+      }
+
+      // 9. Actualizar cita
+      appointment.date = date;
+      appointment.startTime = startTime;
+      appointment.endTime = endTime;
+      appointment.service = service;
+      appointment.employee = employee;
+      appointment.notes = dto.notes ?? appointment.notes;
+      appointment.status = dto.status ?? appointment.status;
     }
-
-    // 8. Validar conflictos (IMPORTANTE: ignorar esta misma cita)
-    const conflict = await this.appointmentRepository.findOne({
-      where: {
-        employee: { id: employee.id },
-        date: date,
-        startTime: LessThan(endTime),
-        endTime: MoreThan(startTime),
-        id: Not(id), // ← evita chocar consigo misma
-      },
-    });
-
-    if (conflict) {
-      throw new BadRequestException(
-        `Employee not available for appointment (${startTime} - ${endTime})`,
-      );
-    }
-
-    // 9. Actualizar cita
-    appointment.date = date;
-    appointment.startTime = startTime;
-    appointment.endTime = endTime;
-    appointment.service = service;
-    appointment.employee = employee;
-    appointment.notes = dto.notes ?? appointment.notes;
-    appointment.status = dto.status ?? appointment.status;
 
     try {
       await this.appointmentRepository.save(appointment);

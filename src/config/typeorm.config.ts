@@ -5,6 +5,9 @@ config();
 
 const configService = new ConfigService();
 
+// Condición para determinar si estamos en producción (prod)
+const isProduction = process.env.STAGE === 'prod';
+
 const AppDataSource = new DataSource({
   type: 'postgres',
   host: configService.get<string>('DB_HOST'),
@@ -20,11 +23,13 @@ const AppDataSource = new DataSource({
       : ['src/database/migrations/*-migration.ts'],
   migrationsRun: false,
   logging: true,
-  extra: {
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  },
+  extra: isProduction
+    ? {
+        ssl: {
+          rejectUnauthorized: false, // Necesario si usas un certificado autofirmado
+        },
+      }
+    : {},
 });
 
 export default AppDataSource;

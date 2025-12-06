@@ -66,12 +66,13 @@ export class AppointmentController {
   }
 
   @Patch(':id')
-  @Auth(UserRole.ADMIN)
+  @Auth(UserRole.ADMIN, UserRole.CLIENT)
   update(
     @Param('id') id: string,
     @Body() updateAppointmentDto: UpdateAppointmentDto,
+    @GetUser() user: User,
   ) {
-    return this.appointmentService.update(+id, updateAppointmentDto);
+    return this.appointmentService.update(+id, updateAppointmentDto, user);
   }
 
   @Patch('change-status/:id')
