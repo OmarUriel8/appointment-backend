@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { ServiceService } from './service.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -26,7 +27,7 @@ export class ServiceController {
   }
 
   @Get()
-  findAll(@Body() paginationDto: PaginationDto) {
+  findAll(@Query() paginationDto: PaginationDto) {
     return this.serviceService.findAll(paginationDto);
   }
 

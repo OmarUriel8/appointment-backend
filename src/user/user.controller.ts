@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,7 +29,7 @@ export class UserController {
 
   @Get()
   @Auth(UserRole.ADMIN)
-  findAll(@Body() paginationDto: PaginationDto) {
+  findAll(@Query() paginationDto: PaginationDto) {
     return this.userService.findAll(paginationDto);
   }
 
