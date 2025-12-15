@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsOptional,
@@ -8,6 +9,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { UserRole } from '../enums/user-role.enum';
+import { ToBoolean } from 'src/common/decorators/to-boolean.decorator';
 
 export class CreateUserDto {
   @IsString()
@@ -33,4 +35,9 @@ export class CreateUserDto {
   @IsEnum(UserRole)
   @IsOptional()
   role?: UserRole;
+
+  @ToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 }

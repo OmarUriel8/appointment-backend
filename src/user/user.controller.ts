@@ -15,7 +15,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { UpdatePasswordDto } from './dto/update-pasword.dto';
 import { UserRole } from './enums/user-role.enum';
-import { Auth } from 'src/auth/decorators';
+import { Auth, GetUser } from 'src/auth/decorators';
+import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
@@ -44,8 +45,9 @@ export class UserController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @GetUser() user: User,
   ) {
-    return this.userService.update(id, updateUserDto);
+    return this.userService.update(id, updateUserDto, user);
   }
 
   @Delete(':id')

@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsNumber,
   IsOptional,
   IsPositive,
@@ -8,6 +9,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { ToBoolean } from 'src/common/decorators/to-boolean.decorator';
 
 export class CreateServiceDto {
   @IsString()
@@ -46,4 +48,8 @@ export class CreateServiceDto {
   })
   @IsArray()
   images?: string[];
+
+  @ToBoolean()
+  @IsBoolean()
+  isActive: boolean;
 }

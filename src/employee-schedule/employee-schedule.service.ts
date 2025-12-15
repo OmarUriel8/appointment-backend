@@ -36,11 +36,11 @@ export class EmployeeScheduleService {
       );
     }
 
-    // if (createEmployeeScheduleDtos.length !== 7) {
-    //   throw new BadRequestException(
-    //     `For create the schedules need 7 registers.`,
-    //   );
-    // }
+    if (createEmployeeScheduleDtos.length !== 7) {
+      throw new BadRequestException(
+        `For create the schedules need 7 registers.`,
+      );
+    }
 
     const queryRunner = this.datasource.createQueryRunner();
     await queryRunner.connect();
@@ -62,7 +62,7 @@ export class EmployeeScheduleService {
         return this.employeeScheduleRepository.create({
           ...schedule,
           employee: { id: employeeId },
-          isActive: true,
+          //isActive: true,
         });
       });
 

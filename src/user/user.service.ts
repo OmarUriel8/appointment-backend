@@ -28,7 +28,7 @@ export class UserService {
   async create(createUserDto: CreateUserDto) {
     try {
       const { password, ...restDto } = createUserDto;
-      const user = await this.userRepository.create({
+      const user = this.userRepository.create({
         ...restDto,
         password: bcrypt.hashSync(password, 10),
         role: restDto.role ? restDto.role : UserRole.CLIENT,
@@ -118,8 +118,8 @@ export class UserService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const { role, isActive, ...rest } = updateUserDto;
+  async update(id: string, updateUserDto: UpdateUserDto, userLogin: User) {
+    const { role, isActive, password, ...rest } = updateUserDto;
     const user = await this.userRepository.preload({
       ...rest,
       id,
@@ -129,10 +129,14 @@ export class UserService {
       throw new BadRequestException(`User with id ${id} not found`);
     }
 
-    // if (userLogin.roles.includes(ValidRoles.admin)) {
-    user.role = role ?? user?.role;
-    user.isActive = isActive ?? user.isActive;
-    // }
+    if (userLogin.role.includes(UserRole.ADMIN)) {
+      user.role = role ?? user?.role;
+      user.isActive = isActive ?? user.isActive;
+    }
+
+    if (password) {
+      user.password = bcrypt.hashSync(password, 10);
+    }
 
     await this.userRepository.save(user);
 
