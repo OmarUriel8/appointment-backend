@@ -49,31 +49,12 @@ export class FilesService {
     return uploadedPromise;
   }
 
-  async remove(removeFileDto: RemovefileDto) {
+  async remove(removefileDto: RemovefileDto) {
     try {
-      const { urlImage, idImage } = removeFileDto;
-
-      const serviceImg = await this.serviceImageRepository.findOne({
-        where: { id: idImage },
-        relations: ['service'],
-      });
-
-      if (!serviceImg) {
-        throw new BadRequestException(`The id image not found`);
-      }
-
-      const { service } = serviceImg;
-      const { images, ...rest } = service;
+      const { urlImage } = removefileDto;
 
       const imageName = urlImage.split('/').pop()?.split('.')[0];
       await cloudinary.uploader.destroy(`${this.folder}/${imageName}`);
-
-      const result = await this.serviceImageRepository.delete({ id: idImage });
-
-      return {
-        service: rest,
-        result,
-      };
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException('Internal error. Checks the logs');

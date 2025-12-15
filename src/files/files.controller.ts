@@ -39,9 +39,9 @@ export class FilesController {
     return urlFiles;
   }
 
-  @Delete('service/:url')
+  @Delete('service')
   @Auth(UserRole.ADMIN)
-  remove(@Body() removeFileDto: RemovefileDto) {
-    return this.filesService.remove(removeFileDto);
+  remove(@Body() removefileDto: RemovefileDto) {
+    return this.filesService.remove(removefileDto);
   }
 }
