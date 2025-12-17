@@ -7,8 +7,10 @@ import {
   Matches,
 } from 'class-validator';
 import { AppointmentStatus } from '../enum/appointment-status.enum';
+import { Type } from 'class-transformer';
 
 export class CreateAppointmentDto {
+  @Type(() => Date)
   @IsDate()
   date: Date;
 

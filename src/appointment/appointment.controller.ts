@@ -11,15 +11,20 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
-import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { UpdateAppointmentDto } from './dto/update-appointment.dto';
+
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/user/entities/user.entity';
-import { ChangeStatusAppointmentDto } from './dto/change-status-appointment.dto';
 import { UserRole } from 'src/user/enums/user-role.enum';
-import { CancelAppointmentDto } from './dto/cancel-appointment.dto';
-import { TestimonialDto } from './dto/testimonial.dto';
+import {
+  AvaliableEmployeeDto,
+  AvaliableScheduleDto,
+  CancelAppointmentDto,
+  ChangeStatusAppointmentDto,
+  CreateAppointmentDto,
+  TestimonialDto,
+  UpdateAppointmentDto,
+} from './dto';
 
 @Controller('appointment')
 export class AppointmentController {
@@ -64,6 +69,18 @@ export class AppointmentController {
   @Get('testimonials')
   findTestimonials(@Query() testimonialDto: TestimonialDto) {
     return this.appointmentService.findTestimonials(testimonialDto);
+  }
+
+  @Get('available-hours')
+  @Auth()
+  findAvailableHours(@Query() avaliableScheduleDto: AvaliableScheduleDto) {
+    return this.appointmentService.findAvailableHours(avaliableScheduleDto);
+  }
+
+  @Get('available-employee')
+  @Auth()
+  findAvailableEmployee(@Query() avaliableEmployeeDto: AvaliableEmployeeDto) {
+    return this.appointmentService.findAvailableEmployee(avaliableEmployeeDto);
   }
 
   @Get(':id')

@@ -56,7 +56,7 @@ export class UserService {
       where.role = role as UserRole;
     }
     if (isActive !== null) {
-      where.isActice = isActive;
+      where.isActive = isActive;
     }
 
     const [users, userCount] = await this.userRepository.findAndCount({

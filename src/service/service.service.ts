@@ -38,7 +38,7 @@ export class ServiceService {
       });
 
       await this.serviceRepository.save(service);
-      console.log(service);
+      //console.log(service);
 
       return {
         ...service,

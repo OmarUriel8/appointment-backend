@@ -15,13 +15,22 @@ import { User } from 'src/user/entities/user.entity';
 import { AppointmentStatus } from './enum/appointment-status.enum';
 import { ChangeStatusAppointmentDto } from './dto/change-status-appointment.dto';
 import { ServiceService } from 'src/service/service.service';
-import { addMinutes, toLocalDate, toSeconds, validateNotPast } from 'src/utils';
+import {
+  addMinutes,
+  generateSlots,
+  isFree,
+  toLocalDate,
+  toSeconds,
+  validateNotPast,
+} from 'src/utils';
 import { EmployeeSchedule } from 'src/employee-schedule/entities/employee-schedule.entity';
 import { UserService } from 'src/user/user.service';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { isUUID } from 'class-validator';
 import { CancelAppointmentDto } from './dto/cancel-appointment.dto';
 import { TestimonialDto } from './dto/testimonial.dto';
+import { AvaliableScheduleDto } from './dto/avaliable-schedule.dto';
+import { AvaliableEmployeeDto } from './dto';
 
 @Injectable()
 export class AppointmentService {
@@ -142,6 +151,10 @@ export class AppointmentService {
   }
 
   async findOne(id: number, user: User | null) {
+    if (isNaN(Number(id))) {
+      throw new BadRequestException(`Id is not valid`);
+    }
+
     const appointment = await this.appointmentRepository.findOne({
       where: { id },
       relations: ['service', 'client', 'employee'],
@@ -169,6 +182,73 @@ export class AppointmentService {
     return {
       ...appointment,
     };
+  }
+
+  async findAvailableHours(avaliableScheduleDto: AvaliableScheduleDto) {
+    const { date } = avaliableScheduleDto;
+    const where: any = { date: date.toISOString().split('T')[0] };
+    const appointments = await this.appointmentRepository.find({
+      where,
+      relations: {
+        employee: {
+          employeeSchedule: true,
+        },
+      },
+    });
+
+    const validAppointments = appointments.filter(
+      (a) => a.status !== AppointmentStatus.CANCELLED,
+    );
+
+    const schedules = await this.employeeScheduleRepository.find({
+      where: {
+        dayOfWeek: date.getDay(),
+        isActive: true,
+      },
+    });
+
+    // const freeSchedules = schedules.map((schedule) => {
+    //   const allSlots = generateSlots(schedule.startTime, schedule.endTime);
+
+    //   const freeSlots = allSlots.filter((slot) =>
+    //     isFree(slot, validAppointments),
+    //   );
+
+    //   return {
+    //     scheduleId: schedule.id,
+    //     dayOfWeek: schedule.dayOfWeek,
+    //     slots: freeSlots,
+    //   };
+    // });
+
+    const globalSlots = new Set<string>();
+
+    schedules.forEach((schedule) => {
+      const slots = generateSlots(schedule.startTime, schedule.endTime);
+
+      slots.forEach((slot) => {
+        if (isFree(slot, validAppointments)) {
+          globalSlots.add(slot);
+        }
+      });
+    });
+
+    return Array.from(globalSlots).sort();
+  }
+
+  async findAvailableEmployee(avaliableEmployeeDto: AvaliableEmployeeDto) {
+    const { date, startTime, idService } = avaliableEmployeeDto;
+    const service = await this.serviceService.findOne(idService);
+
+    const endTime = addMinutes(startTime, service.durationMinutes);
+    const avaliableEmployee = this.employeesAvalible(
+      startTime,
+      endTime,
+      date,
+      date.getDay(),
+    );
+
+    return avaliableEmployee;
   }
 
   async update(id: number, dto: UpdateAppointmentDto, user: User) {
@@ -479,6 +559,34 @@ export class AppointmentService {
     throw new BadRequestException('No employee is available for that time.');
   }
 
+  private async employeesAvalible(
+    startTime: string,
+    endTime: string,
+    date: Date,
+    day: number,
+  ) {
+    const employees = (
+      await this.userService.findAll({
+        isActive: true,
+        role: UserRole.EMPLOYEE,
+      })
+    ).users;
+
+    const avaliableEmployees: User[] = [];
+    for (const emp of employees) {
+      if (!(await this.isWithinSchedule(emp, startTime, endTime, day)))
+        continue;
+      if (await this.hasConflicts(emp, date, startTime, endTime)) continue;
+
+      avaliableEmployees.push(emp);
+    }
+
+    if (avaliableEmployees.length === 0) {
+      throw new BadRequestException('No employee is available for that time.');
+    }
+    return avaliableEmployees;
+  }
+
   private async getAppointmentes(
     paginationDto: PaginationDto,
     idClient: string = '',
@@ -504,9 +612,8 @@ export class AppointmentService {
       where.employee = {};
       where.employee.id = idEmployee;
     }
-
     if (appointmentDate) {
-      where.date = appointmentDate;
+      where.date = appointmentDate.toISOString().split('T')[0];
     }
 
     const [appointments, appointmentsCount] =
