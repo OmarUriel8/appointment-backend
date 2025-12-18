@@ -30,7 +30,7 @@ import { isUUID } from 'class-validator';
 import { CancelAppointmentDto } from './dto/cancel-appointment.dto';
 import { TestimonialDto } from './dto/testimonial.dto';
 import { AvaliableScheduleDto } from './dto/avaliable-schedule.dto';
-import { AvaliableEmployeeDto } from './dto';
+import { AvaliableEmployeeDto, ScoreAppointmentDto } from './dto';
 
 @Injectable()
 export class AppointmentService {
@@ -205,21 +205,10 @@ export class AppointmentService {
         dayOfWeek: date.getDay(),
         isActive: true,
       },
+      relations: {
+        employee: true,
+      },
     });
-
-    // const freeSchedules = schedules.map((schedule) => {
-    //   const allSlots = generateSlots(schedule.startTime, schedule.endTime);
-
-    //   const freeSlots = allSlots.filter((slot) =>
-    //     isFree(slot, validAppointments),
-    //   );
-
-    //   return {
-    //     scheduleId: schedule.id,
-    //     dayOfWeek: schedule.dayOfWeek,
-    //     slots: freeSlots,
-    //   };
-    // });
 
     const globalSlots = new Set<string>();
 
@@ -227,7 +216,7 @@ export class AppointmentService {
       const slots = generateSlots(schedule.startTime, schedule.endTime);
 
       slots.forEach((slot) => {
-        if (isFree(slot, validAppointments)) {
+        if (isFree(slot, validAppointments, schedule.employee.id)) {
           globalSlots.add(slot);
         }
       });
@@ -251,6 +240,21 @@ export class AppointmentService {
     return avaliableEmployee;
   }
 
+  async updateScore(id: number, dto: ScoreAppointmentDto, user: User) {
+    const { comments, score } = dto;
+    const appointment = await this.findOne(id, user);
+
+    appointment.comments = comments;
+    appointment.score = score;
+
+    try {
+      await this.appointmentRepository.save(appointment);
+      return appointment;
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
+
   async update(id: number, dto: UpdateAppointmentDto, user: User) {
     // 1. Obtener la cita actual
     const appointment = await this.findOne(id, null);
@@ -266,93 +270,86 @@ export class AppointmentService {
       throw new BadRequestException(`Client cannot be modified`);
     }
 
-    if (user.role === UserRole.CLIENT) {
-      appointment.notes = dto.notes ?? appointment.notes;
-      appointment.comments = dto.comments ?? appointment.comments;
-      appointment.score = dto.score ?? appointment.score;
-    } else {
-      // 2. Preparar valores actualizados
-      const date = toLocalDate(dto.date ?? appointment.date);
-      const startTime = dto.startTime ?? appointment.startTime;
+    // 2. Preparar valores actualizados
+    const date = toLocalDate(dto.date ?? appointment.date);
+    const startTime = dto.startTime ?? appointment.startTime;
 
-      // Validar que la nueva fecha no sea pasada
-      validateNotPast(date.toString(), startTime);
+    // Validar que la nueva fecha no sea pasada
+    validateNotPast(date.toString(), startTime);
 
-      const day = new Date(date).getDay();
+    const day = new Date(date).getDay();
 
-      // 3. Valida el estatus de la cita
-      if (
-        dto.status &&
-        !this.validChangeStatus(appointment.status, dto.status)
-      ) {
-        throw new BadRequestException(
-          `The status ${appointment.status} can't change to ${status}`,
-        );
-      }
-
-      // 4. Obtener servicio (si cambia)
-      let service = appointment.service;
-
-      if (dto.serviceId && dto.serviceId !== appointment.service.id) {
-        service = await this.serviceService.findOne(dto.serviceId);
-
-        if (!service.isActive) {
-          throw new BadRequestException(
-            `Service ${service.name} not available at the moment}`,
-          );
-        }
-      }
-
-      // 5. Calcular nuevo endTime en base al *servicio actual o nuevo*
-      const endTime = addMinutes(startTime, service.durationMinutes);
-
-      // 6. Obtener empleado (si cambia o si se envía uno nuevo)
-      let employee = appointment.employee;
-
-      if (dto.employeeId && dto.employeeId !== appointment.employee.id) {
-        employee = (await this.userService.findOne(dto.employeeId)) as User;
-      }
-
-      // 7. Validar horario del empleado
-      const within = await this.isWithinSchedule(
-        employee,
-        startTime,
-        endTime,
-        day,
+    // 3. Valida el estatus de la cita
+    if (dto.status && !this.validChangeStatus(appointment.status, dto.status)) {
+      throw new BadRequestException(
+        `The status ${appointment.status} can't change to ${status}`,
       );
-
-      if (!within) {
-        throw new BadRequestException(
-          `Employee not available for appointment (${startTime} - ${endTime})`,
-        );
-      }
-
-      // 8. Validar conflictos (IMPORTANTE: ignorar esta misma cita)
-      const conflict = await this.appointmentRepository.findOne({
-        where: {
-          employee: { id: employee.id },
-          date: date,
-          startTime: LessThan(endTime),
-          endTime: MoreThan(startTime),
-          id: Not(id), // ← evita chocar consigo misma
-        },
-      });
-
-      if (conflict) {
-        throw new BadRequestException(
-          `Employee not available for appointment (${startTime} - ${endTime})`,
-        );
-      }
-
-      // 9. Actualizar cita
-      appointment.date = date;
-      appointment.startTime = startTime;
-      appointment.endTime = endTime;
-      appointment.service = service;
-      appointment.employee = employee;
-      appointment.notes = dto.notes ?? appointment.notes;
-      appointment.status = dto.status ?? appointment.status;
     }
+
+    // 4. Obtener servicio (si cambia)
+    let service = appointment.service;
+
+    if (dto.serviceId && dto.serviceId !== appointment.service.id) {
+      service = await this.serviceService.findOne(dto.serviceId);
+
+      if (!service.isActive) {
+        throw new BadRequestException(
+          `Service ${service.name} not available at the moment}`,
+        );
+      }
+    }
+
+    // 5. Calcular nuevo endTime en base al *servicio actual o nuevo*
+    const endTime = addMinutes(startTime, service.durationMinutes);
+
+    // 6. Obtener empleado (si cambia o si se envía uno nuevo)
+    let employee = appointment.employee;
+
+    if (dto.employeeId && dto.employeeId !== appointment.employee.id) {
+      employee = (await this.userService.findOne(dto.employeeId)) as User;
+    }
+
+    // 7. Validar horario del empleado
+    const within = await this.isWithinSchedule(
+      employee,
+      startTime,
+      endTime,
+      day,
+    );
+
+    if (!within) {
+      throw new BadRequestException(
+        `Employee not available for appointment (${startTime} - ${endTime})`,
+      );
+    }
+
+    // 8. Validar conflictos (IMPORTANTE: ignorar esta misma cita)
+    const conflict = await this.appointmentRepository.findOne({
+      where: {
+        employee: { id: employee.id },
+        date: date,
+        startTime: LessThan(endTime),
+        endTime: MoreThan(startTime),
+        id: Not(id), // ← evita chocar consigo misma
+      },
+    });
+
+    if (conflict) {
+      throw new BadRequestException(
+        `Employee not available for appointment (${startTime} - ${endTime})`,
+      );
+    }
+
+    // 9. Actualizar cita
+    appointment.date = date;
+    appointment.startTime = startTime;
+    appointment.endTime = endTime;
+    appointment.service = service;
+    appointment.employee = employee;
+    appointment.status = dto.status ?? appointment.status;
+    appointment.comments = dto.comments ?? appointment.comments;
+    appointment.notes = dto.notes ?? appointment.notes;
+    appointment.score = dto.score ?? appointment.score;
 
     try {
       await this.appointmentRepository.save(appointment);
@@ -418,6 +415,9 @@ export class AppointmentService {
       },
       relations: ['client'],
       take: limit,
+      order: {
+        date: 'DESC',
+      },
     });
 
     if (!testimonials) {
@@ -597,6 +597,7 @@ export class AppointmentService {
       offset = 0,
       appointmentStatus = 'all',
       appointmentDate = undefined,
+      appointmentId = 0,
     } = paginationDto;
 
     let where = {} as any;
@@ -616,12 +617,16 @@ export class AppointmentService {
       where.date = appointmentDate.toISOString().split('T')[0];
     }
 
+    if (appointmentId !== 0) {
+      where.id = appointmentId;
+    }
+
     const [appointments, appointmentsCount] =
       await this.appointmentRepository.findAndCount({
         where: where,
         take: limit,
         skip: offset,
-        order: { date: 'asc', startTime: 'asc' },
+        order: { date: 'desc', startTime: 'asc' },
         relations: ['service', 'client', 'employee'],
       });
 

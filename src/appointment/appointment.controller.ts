@@ -22,6 +22,7 @@ import {
   CancelAppointmentDto,
   ChangeStatusAppointmentDto,
   CreateAppointmentDto,
+  ScoreAppointmentDto,
   TestimonialDto,
   UpdateAppointmentDto,
 } from './dto';
@@ -89,6 +90,16 @@ export class AppointmentController {
     return this.appointmentService.findOne(+id, user);
   }
 
+  @Patch('score/:id')
+  @Auth(UserRole.CLIENT, UserRole.ADMIN)
+  updateScore(
+    @Param('id') id: string,
+    @Body() scoreAppointmentDto: ScoreAppointmentDto,
+    @GetUser() user: User,
+  ) {
+    return this.appointmentService.updateScore(+id, scoreAppointmentDto, user);
+  }
+
   @Patch(':id')
   @Auth(UserRole.ADMIN, UserRole.CLIENT)
   update(
@@ -100,7 +111,7 @@ export class AppointmentController {
   }
 
   @Patch('change-status/:id')
-  @Auth(UserRole.ADMIN, UserRole.EMPLOYEE)
+  @Auth(UserRole.ADMIN, UserRole.EMPLOYEE, UserRole.CLIENT)
   changeStatus(
     @Param('id') id: string,
     @Body() changeStatusAppointmentDto: ChangeStatusAppointmentDto,

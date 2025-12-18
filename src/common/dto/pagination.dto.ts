@@ -3,6 +3,7 @@ import {
   IsDate,
   IsEnum,
   IsIn,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
@@ -47,4 +48,10 @@ export class PaginationDto {
   @IsDate()
   @IsOptional()
   appointmentDate?: Date;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  appointmentId?: number;
 }

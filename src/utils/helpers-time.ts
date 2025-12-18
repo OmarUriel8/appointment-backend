@@ -21,6 +21,7 @@ export function generateSlots(start: string, end: string, minutes = 30) {
 export function isFree(
   slot: string,
   appointments: Appointment[],
+  idemployee: string,
   duration = 30,
 ) {
   const slotStart = toDate(`${slot}:00`);
@@ -28,9 +29,12 @@ export function isFree(
   slotEnd.setMinutes(slotEnd.getMinutes() + duration);
 
   return !appointments.some((app) => {
+    const idEmployeeApp = app.employee.id;
     const appStart = toDate(app.startTime);
     const appEnd = toDate(app.endTime);
 
-    return slotStart < appEnd && slotEnd > appStart;
+    return (
+      slotStart < appEnd && slotEnd > appStart && idemployee !== idEmployeeApp
+    );
   });
 }
