@@ -7,6 +7,7 @@ import { FilesModule } from './files/files.module';
 import { EmployeeScheduleModule } from './employee-schedule/employee-schedule.module';
 import { AppointmentModule } from './appointment/appointment.module';
 import { AuthModule } from './auth/auth.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AuthModule } from './auth/auth.module';
     EmployeeScheduleModule,
     AppointmentModule,
     AuthModule,
+    DashboardModule,
   ],
   controllers: [],
   providers: [],

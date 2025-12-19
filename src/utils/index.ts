@@ -1,5 +1,5 @@
-export { toSeconds } from './to-seconds';
-export { addMinutes } from './add-minutes';
-export { validateNotPast } from './valid-not-past';
-export { toLocalDate } from './to-local-date';
+export * from './to-seconds';
+export * from './add-minutes';
+export * from './valid-not-past';
+export * from './to-local-date';
 export * from './helpers-time';

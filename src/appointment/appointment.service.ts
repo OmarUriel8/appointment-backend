@@ -129,6 +129,9 @@ export class AppointmentService {
         service: { id: service.id },
         endTime: endTime,
         date: date,
+        price: service.price,
+        durationMinutes: service.durationMinutes,
+        nameService: service.name,
       });
 
       await this.appointmentRepository.save(appointment);
@@ -350,6 +353,9 @@ export class AppointmentService {
     appointment.comments = dto.comments ?? appointment.comments;
     appointment.notes = dto.notes ?? appointment.notes;
     appointment.score = dto.score ?? appointment.score;
+    appointment.price = service.price;
+    appointment.durationMinutes = service.durationMinutes;
+    appointment.nameService = service.name;
 
     try {
       await this.appointmentRepository.save(appointment);

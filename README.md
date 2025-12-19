@@ -17,13 +17,7 @@ docker-compose up -d
   npm run migrate:run
 ```
 
-7. Ejecutar SEED, para llenar la base de datos
-
-```
-http://localhost:3000/api/seed
-```
-
-8. Levantar el desarrollo `npm run start:dev`
+7. Levantar el desarrollo `npm run start:dev`
 
 ## Hacer migraciones
 

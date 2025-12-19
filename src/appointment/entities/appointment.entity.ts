@@ -58,6 +58,24 @@ export class Appointment {
   })
   score: number;
 
+  @Column({
+    type: 'float',
+    default: 0,
+  })
+  price: number;
+
+  @Column({
+    type: 'text',
+    default: '',
+  })
+  nameService: string;
+
+  @Column({
+    type: 'int',
+    default: '30',
+  })
+  durationMinutes: number;
+
   @CreateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
