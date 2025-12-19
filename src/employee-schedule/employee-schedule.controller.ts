@@ -13,7 +13,9 @@ import { EmployeeScheduleService } from './employee-schedule.service';
 import { Auth } from 'src/auth/decorators';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { CreateEmployeeScheduleDto, UpdateEmployeeScheduleDto } from './dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Employee Schedule')
 @Controller('employee-schedule')
 export class EmployeeScheduleController {
   constructor(
@@ -22,6 +24,7 @@ export class EmployeeScheduleController {
 
   @Post(':employeeId')
   @Auth(UserRole.ADMIN)
+  @ApiBearerAuth('access-token')
   create(
     @Param('employeeId', ParseUUIDPipe) employeeId: string,
     @Body() createEmployeeScheduleDto: CreateEmployeeScheduleDto[],
@@ -34,12 +37,14 @@ export class EmployeeScheduleController {
 
   @Get(':employeeId')
   @Auth(UserRole.ADMIN, UserRole.EMPLOYEE)
+  @ApiBearerAuth('access-token')
   findOne(@Param('employeeId', ParseUUIDPipe) employeeId: string) {
     return this.employeeScheduleService.findOne(employeeId);
   }
 
   @Patch(':id')
   @Auth(UserRole.ADMIN)
+  @ApiBearerAuth('access-token')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateEmployeeScheduleDto: UpdateEmployeeScheduleDto,
@@ -49,6 +54,7 @@ export class EmployeeScheduleController {
 
   @Delete(':id')
   @Auth(UserRole.ADMIN)
+  @ApiBearerAuth('access-token')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.employeeScheduleService.remove(id);
   }

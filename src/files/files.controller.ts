@@ -14,7 +14,9 @@ import { fileFilter } from './helpers/fileFilter';
 import { RemovefileDto } from './dto';
 import { Auth } from 'src/auth/decorators';
 import { UserRole } from 'src/user/enums/user-role.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Files')
 @Controller('files')
 export class FilesController {
   private readonly logger = new Logger(FilesController.name);
@@ -29,6 +31,7 @@ export class FilesController {
     }),
   )
   @Auth(UserRole.ADMIN)
+  @ApiBearerAuth('access-token')
   async uploadServiceImage(@UploadedFiles() files: Array<Express.Multer.File>) {
     if (files.length === 0) {
       throw new BadRequestException('Make sure that the file is a image');
@@ -40,6 +43,7 @@ export class FilesController {
 
   @Delete('service')
   @Auth(UserRole.ADMIN)
+  @ApiBearerAuth('access-token')
   remove(@Body() removefileDto: RemovefileDto) {
     return this.filesService.remove(removefileDto);
   }

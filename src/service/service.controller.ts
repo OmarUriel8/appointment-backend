@@ -14,13 +14,17 @@ import { CreateServiceDto, UpdateServiceDto, PaginationServDto } from './dto';
 
 import { Auth } from 'src/auth/decorators';
 import { UserRole } from 'src/user/enums/user-role.enum';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiTags('Service')
 @Controller('service')
 export class ServiceController {
   constructor(private readonly serviceService: ServiceService) {}
 
   @Post()
   @Auth(UserRole.ADMIN)
+  @ApiBearerAuth('access-token')
+  @ApiBearerAuth('access-token')
   create(@Body() createServiceDto: CreateServiceDto) {
     return this.serviceService.create(createServiceDto);
   }
@@ -37,6 +41,7 @@ export class ServiceController {
 
   @Patch(':id')
   @Auth(UserRole.ADMIN)
+  @ApiBearerAuth('access-token')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateServiceDto: UpdateServiceDto,
@@ -46,6 +51,7 @@ export class ServiceController {
 
   @Delete(':id')
   @Auth(UserRole.ADMIN)
+  @ApiBearerAuth('access-token')
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.serviceService.remove(id);
   }

@@ -1,18 +1,19 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginUserDto } from './dto/login-user.dto';
-import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto, RegisterUserDto } from './dto';
 import { User } from 'src/user/entities/user.entity';
 import { Auth, GetUser } from './decorators';
 import { UserRole } from 'src/user/enums/user-role.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.authService.create(createUserDto);
+  create(@Body() registerUserDto: RegisterUserDto) {
+    return this.authService.create(registerUserDto);
   }
 
   @Post('login')
@@ -22,6 +23,7 @@ export class AuthController {
 
   @Get('check-status')
   @Auth()
+  @ApiBearerAuth('access-token')
   checkAuthStatus(@GetUser() user: User) {
     return this.authService.checkAuthStatus(user);
   }

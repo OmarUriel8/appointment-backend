@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   // ? Configuracion de la zona horaria
@@ -23,6 +24,28 @@ async function bootstrap() {
       },
     }),
   );
+
+  // ? Se agrega Swagger para documentar
+  const config = new DocumentBuilder()
+    .setTitle('Appointment REST Full API.')
+    .setDescription('Appointment endpoints.')
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Ingresa el token JWT sin "Bearer " al inicio',
+        in: 'header',
+      },
+      'access-token', // ? nombre del esquema
+    )
+    //.addTag('Prueba')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  // ? No genera todo el mapea se deben de configurar controllers y dtos
+  SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3000);
   logger.log(`Api running on port ${process.env.PORT || 3000}`);

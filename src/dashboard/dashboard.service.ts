@@ -29,7 +29,6 @@ export class DashboardService {
   ) {}
 
   async findAdmin(dashboardDto: DashboardDto) {
-    console.log(dashboardDto);
     try {
       const { endDate, startDate } = dashboardDto;
 

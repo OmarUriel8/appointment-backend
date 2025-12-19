@@ -7,7 +7,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class LoginUserDto {
+export class RegisterUserDto {
   @ApiProperty({
     required: true,
     type: 'string',
@@ -40,4 +40,12 @@ export class LoginUserDto {
       'The password must have a Uppercase, lowercase letter and a number',
   })
   password: string;
+
+  @ApiProperty({
+    required: true,
+    type: String,
+  })
+  @IsString()
+  @MinLength(1)
+  name: string;
 }
