@@ -47,7 +47,4 @@ y se agrego libreria **dotenv y typeorm**
 - Nest
 - Postgres
 - Type ORM
-
-```
-
-```
+- cloudinary
