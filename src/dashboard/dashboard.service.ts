@@ -265,6 +265,7 @@ export class DashboardService {
         .createQueryBuilder('apt')
         .select('apt.comments', 'comments')
         .addSelect('apt.score', 'score')
+        .addSelect('apt.id', 'id')
         .where('apt.status = :status', { status: AppointmentStatus.COMPLETED })
         .andWhere('apt.date BETWEEN :start AND :end', {
           start: startDate,
