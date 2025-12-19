@@ -4,20 +4,14 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
 import { v2 as cloudinary } from 'cloudinary';
-import { ServiceImage } from 'src/service/entities';
-import { Repository } from 'typeorm';
-import { RemovefileDto } from './dto/remove-file.dto';
+import { RemovefileDto } from './dto';
 
 @Injectable()
 export class FilesService {
   private readonly folder: string;
-  constructor(
-    private readonly configService: ConfigService,
-    @InjectRepository(ServiceImage)
-    private readonly serviceImageRepository: Repository<ServiceImage>,
-  ) {
+
+  constructor(private readonly configService: ConfigService) {
     cloudinary.config({
       cloud_name: configService.get('CLOUDINARY_NAME'),
       api_key: configService.get('CLOUDINARY_API_KEY'),

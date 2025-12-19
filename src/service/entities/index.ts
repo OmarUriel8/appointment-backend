@@ -1,2 +1,2 @@
-export { ServiceImage } from './service-image.entity';
-export { Service } from './service.entity';
+export * from './service-image.entity';
+export * from './service.entity';

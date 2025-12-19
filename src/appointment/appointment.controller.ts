@@ -8,11 +8,9 @@ import {
   Delete,
   ParseUUIDPipe,
   Query,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
 
-import { PaginationDto } from '../common/dto/pagination.dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/user/entities/user.entity';
 import { UserRole } from 'src/user/enums/user-role.enum';
@@ -25,6 +23,7 @@ import {
   ScoreAppointmentDto,
   TestimonialDto,
   UpdateAppointmentDto,
+  PaginationAptDto,
 } from './dto';
 
 @Controller('appointment')
@@ -44,7 +43,7 @@ export class AppointmentController {
   @Auth(UserRole.ADMIN, UserRole.CLIENT)
   findAllByClientId(
     @Param('idClient', ParseUUIDPipe) idClient: string,
-    @Query() paginationDto: PaginationDto,
+    @Query() paginationDto: PaginationAptDto,
   ) {
     return this.appointmentService.findAllByClientId(paginationDto, idClient);
   }
@@ -53,7 +52,7 @@ export class AppointmentController {
   @Auth(UserRole.ADMIN, UserRole.EMPLOYEE)
   findAllByEmployeeId(
     @Param('idEmployee', ParseUUIDPipe) idEmployee: string,
-    @Query() paginationDto: PaginationDto,
+    @Query() paginationDto: PaginationAptDto,
   ) {
     return this.appointmentService.findAllByEmployeeId(
       paginationDto,
@@ -63,7 +62,7 @@ export class AppointmentController {
 
   @Get()
   @Auth(UserRole.ADMIN)
-  findAll(@Query() paginationDto: PaginationDto) {
+  findAll(@Query() paginationDto: PaginationAptDto) {
     return this.appointmentService.findAll(paginationDto);
   }
 

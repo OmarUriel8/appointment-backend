@@ -10,10 +10,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { UpdatePasswordDto } from './dto/update-pasword.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  PaginationUserDto,
+  UpdatePasswordDto,
+} from './dto';
 import { UserRole } from './enums/user-role.enum';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from './entities/user.entity';
@@ -30,8 +32,8 @@ export class UserController {
 
   @Get()
   @Auth(UserRole.ADMIN)
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.userService.findAll(paginationDto);
+  findAll(@Query() paginationUserDto: PaginationUserDto) {
+    return this.userService.findAll(paginationUserDto);
   }
 
   @Get(':term')

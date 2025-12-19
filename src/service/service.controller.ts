@@ -10,9 +10,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { ServiceService } from './service.service';
-import { CreateServiceDto } from './dto/create-service.dto';
-import { UpdateServiceDto } from './dto/update-service.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { CreateServiceDto, UpdateServiceDto, PaginationServDto } from './dto';
+
 import { Auth } from 'src/auth/decorators';
 import { UserRole } from 'src/user/enums/user-role.enum';
 
@@ -27,8 +26,8 @@ export class ServiceController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.serviceService.findAll(paginationDto);
+  findAll(@Query() paginationServDto: PaginationServDto) {
+    return this.serviceService.findAll(paginationServDto);
   }
 
   @Get(':term')

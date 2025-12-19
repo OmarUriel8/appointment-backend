@@ -6,3 +6,4 @@ export * from './create-appointment.dto';
 export * from './score-appointment.dto';
 export * from './testimonial.dto';
 export * from './update-appointment.dto';
+export * from './pagination-apt.dto';

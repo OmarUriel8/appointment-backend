@@ -5,14 +5,14 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateEmployeeScheduleDto } from './dto/create-employee-schedule.dto';
-import { UpdateEmployeeScheduleDto } from './dto/update-employee-schedule.dto';
+
 import { DataSource, Repository } from 'typeorm';
 import { EmployeeSchedule } from './entities/employee-schedule.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { UserRole } from 'src/user/enums/user-role.enum';
 import { toSeconds } from '../utils/to-seconds';
+import { CreateEmployeeScheduleDto, UpdateEmployeeScheduleDto } from './dto';
 
 @Injectable()
 export class EmployeeScheduleService {

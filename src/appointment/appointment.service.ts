@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Appointment } from './entities/appointment.entity';
 import { LessThan, MoreThan, Not, Raw, Repository } from 'typeorm';
@@ -30,7 +29,11 @@ import { isUUID } from 'class-validator';
 import { CancelAppointmentDto } from './dto/cancel-appointment.dto';
 import { TestimonialDto } from './dto/testimonial.dto';
 import { AvaliableScheduleDto } from './dto/avaliable-schedule.dto';
-import { AvaliableEmployeeDto, ScoreAppointmentDto } from './dto';
+import {
+  AvaliableEmployeeDto,
+  PaginationAptDto,
+  ScoreAppointmentDto,
+} from './dto';
 
 @Injectable()
 export class AppointmentService {
@@ -142,14 +145,17 @@ export class AppointmentService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
+  async findAll(paginationDto: PaginationAptDto) {
     return await this.getAppointmentes(paginationDto);
   }
 
-  async findAllByClientId(paginationDto: PaginationDto, idClient: string) {
+  async findAllByClientId(paginationDto: PaginationAptDto, idClient: string) {
     return await this.getAppointmentes(paginationDto, idClient);
   }
-  async findAllByEmployeeId(paginationDto: PaginationDto, idEmployee: string) {
+  async findAllByEmployeeId(
+    paginationDto: PaginationAptDto,
+    idEmployee: string,
+  ) {
     return await this.getAppointmentes(paginationDto, '', idEmployee);
   }
 
@@ -594,7 +600,7 @@ export class AppointmentService {
   }
 
   private async getAppointmentes(
-    paginationDto: PaginationDto,
+    paginationDto: PaginationAptDto,
     idClient: string = '',
     idEmployee: string = '',
   ) {

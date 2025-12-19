@@ -9,10 +9,10 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { EmployeeScheduleService } from './employee-schedule.service';
-import { CreateEmployeeScheduleDto } from './dto/create-employee-schedule.dto';
-import { UpdateEmployeeScheduleDto } from './dto/update-employee-schedule.dto';
+
 import { Auth } from 'src/auth/decorators';
 import { UserRole } from 'src/user/enums/user-role.enum';
+import { CreateEmployeeScheduleDto, UpdateEmployeeScheduleDto } from './dto';
 
 @Controller('employee-schedule')
 export class EmployeeScheduleController {

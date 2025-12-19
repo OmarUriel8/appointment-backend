@@ -6,13 +6,12 @@ import {
   BadRequestException,
   UploadedFiles,
   Delete,
-  Param,
   Body,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from './helpers/fileFilter';
-import { RemovefileDto } from './dto/remove-file.dto';
+import { RemovefileDto } from './dto';
 import { Auth } from 'src/auth/decorators';
 import { UserRole } from 'src/user/enums/user-role.enum';
 

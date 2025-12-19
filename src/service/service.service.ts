@@ -11,9 +11,8 @@ import { DataSource, Repository } from 'typeorm';
 import { Service } from './entities/service.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceImage } from './entities/service-image.entity';
-import { PaginationDto } from '../common/dto/pagination.dto';
 import { isUUID } from 'class-validator';
-import { UserRole } from 'src/user/enums/user-role.enum';
+import { PaginationServDto } from './dto';
 
 @Injectable()
 export class ServiceService {
@@ -49,13 +48,13 @@ export class ServiceService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
+  async findAll(paginationServDto: PaginationServDto) {
     const {
       offset = 0,
       limit = 10,
       serviceName = '',
       isActive = null,
-    } = paginationDto;
+    } = paginationServDto;
 
     // let where = {} as any;
     // if (serviceName !== '') {

@@ -6,15 +6,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { isUUID } from 'class-validator';
 import { UserRole } from './enums/user-role.enum';
-import { UpdatePasswordDto } from './dto/update-pasword.dto';
+import {
+  PaginationUserDto,
+  UpdatePasswordDto,
+  CreateUserDto,
+  UpdateUserDto,
+} from './dto';
 
 @Injectable()
 export class UserService {
@@ -43,13 +45,13 @@ export class UserService {
     }
   }
 
-  async findAll(paginationDto: PaginationDto) {
+  async findAll(paginationUserDto: PaginationUserDto) {
     const {
       limit = 10,
       offset = 0,
       role = 'all',
       isActive = null,
-    } = paginationDto;
+    } = paginationUserDto;
 
     let where = {} as any;
     if (role !== 'all') {
