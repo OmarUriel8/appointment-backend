@@ -3,10 +3,10 @@ import { AppointmentService } from './appointment.service';
 import { AppointmentController } from './appointment.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Appointment } from './entities/appointment.entity';
-import { AuthModule } from 'src/auth/auth.module';
-import { ServiceModule } from 'src/service/service.module';
-import { EmployeeSchedule } from 'src/employee-schedule/entities/employee-schedule.entity';
-import { UserModule } from 'src/user/user.module';
+import { AuthModule } from '../auth/auth.module';
+import { ServiceModule } from '../service/service.module';
+import { UserModule } from '../user/user.module';
+import { EmployeeSchedule } from '../employee-schedule/entities/employee-schedule.entity';
 
 @Module({
   controllers: [AppointmentController],

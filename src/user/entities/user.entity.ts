@@ -1,16 +1,16 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
   BeforeInsert,
   BeforeUpdate,
+  Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { UserRole } from '../enums/user-role.enum';
-import { EmployeeSchedule } from '@/employee-schedule/entities/employee-schedule.entity';
-import { Appointment } from '@/appointment/entities/appointment.entity';
+import { EmployeeSchedule } from '../../employee-schedule/entities/employee-schedule.entity';
+import { Appointment } from '../../appointment/entities/appointment.entity';
 
 @Entity({
   name: 'user',

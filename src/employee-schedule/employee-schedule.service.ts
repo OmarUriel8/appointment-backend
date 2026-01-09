@@ -9,11 +9,11 @@ import {
 import { DataSource, Repository } from 'typeorm';
 import { EmployeeSchedule } from './entities/employee-schedule.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserService } from '@/user/user.service';
-import { UserRole } from '@/user/enums/user-role.enum';
 
 import { CreateEmployeeScheduleDto, UpdateEmployeeScheduleDto } from './dto';
-import { toSeconds } from '@/utils';
+import { UserService } from '../user/user.service';
+import { UserRole } from '../user/enums/user-role.enum';
+import { toSeconds } from '../utils';
 
 @Injectable()
 export class EmployeeScheduleService {

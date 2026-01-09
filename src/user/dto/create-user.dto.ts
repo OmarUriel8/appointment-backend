@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsEmail,
@@ -9,8 +10,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { UserRole } from '../enums/user-role.enum';
-import { ToBoolean } from '@/common/decorators/to-boolean.decorator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ToBoolean } from '../../common/decorators/to-boolean.decorator';
 
 export class CreateUserDto {
   @ApiProperty({

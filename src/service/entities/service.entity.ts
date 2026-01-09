@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ServiceImage } from './service-image.entity';
-import { Appointment } from '@/appointment/entities/appointment.entity';
+import { Appointment } from '../../appointment/entities/appointment.entity';
 
 @Entity({
   name: 'service',

@@ -1,4 +1,4 @@
-import { Appointment } from 'src/appointment/entities/appointment.entity';
+import { Appointment } from '../appointment/entities/appointment.entity';
 
 export function toDate(time: string) {
   return new Date(`1970-01-01T${time}`);

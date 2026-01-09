@@ -3,8 +3,8 @@ import { ServiceService } from './service.service';
 import { ServiceController } from './service.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Service, ServiceImage } from './entities';
-import { Appointment } from '@/appointment/entities/appointment.entity';
-import { AuthModule } from '@/auth/auth.module';
+import { Appointment } from '../appointment/entities/appointment.entity';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   controllers: [ServiceController],

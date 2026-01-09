@@ -7,9 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { AppointmentStatus } from '../enum/appointment-status.enum';
-import { User } from 'src/user/entities/user.entity';
-import { EmployeeSchedule } from 'src/employee-schedule/entities/employee-schedule.entity';
-import { Service } from 'src/service/entities';
+import { User } from '../../user/entities/user.entity';
+import { Service } from '../../service/entities';
 
 @Entity({
   name: 'appointment',

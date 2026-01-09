@@ -1,4 +1,4 @@
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -11,15 +11,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import {
-  CreateUserDto,
-  UpdateUserDto,
-  PaginationUserDto,
-  UpdatePasswordDto,
-} from './dto';
+import { CreateUserDto, UpdateUserDto, PaginationUserDto } from './dto';
 import { UserRole } from './enums/user-role.enum';
-import { Auth, GetUser } from '@/auth/decorators';
+
 import { User } from './entities/user.entity';
+import { Auth, GetUser } from '../auth/decorators';
 
 @ApiTags('User')
 @Controller('user')

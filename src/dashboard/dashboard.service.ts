@@ -5,10 +5,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Appointment } from '@/appointment/entities/appointment.entity';
 import { Repository } from 'typeorm';
 import { DashboardDto } from './dto/dashboard.dto';
-import { AppointmentStatus } from '@/appointment/enum/appointment-status.enum';
 import {
   AppointmentCanceled,
   AppointmentClient,
@@ -18,7 +16,9 @@ import {
   ScoreAverage,
   ServiceMostUsed,
 } from './interfaces';
-import { User } from '@/user/entities/user.entity';
+import { Appointment } from '../appointment/entities/appointment.entity';
+import { AppointmentStatus } from '../appointment/enum/appointment-status.enum';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class DashboardService {

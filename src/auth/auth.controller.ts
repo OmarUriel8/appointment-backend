@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto, RegisterUserDto } from './dto';
-import { User } from '@/user/entities/user.entity';
+
 import { Auth, GetUser } from './decorators';
-import { UserRole } from '@/user/enums/user-role.enum';
+
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { User } from '../user/entities/user.entity';
 
 @ApiTags('Auth')
 @Controller('auth')

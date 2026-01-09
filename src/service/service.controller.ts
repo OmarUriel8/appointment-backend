@@ -12,9 +12,9 @@ import {
 import { ServiceService } from './service.service';
 import { CreateServiceDto, UpdateServiceDto, PaginationServDto } from './dto';
 
-import { Auth } from '@/auth/decorators';
-import { UserRole } from '@/user/enums/user-role.enum';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { UserRole } from '../user/enums/user-role.enum';
+import { Auth } from '../auth/decorators';
 
 @ApiTags('Service')
 @Controller('service')

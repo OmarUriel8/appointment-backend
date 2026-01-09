@@ -10,7 +10,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { ToBoolean } from '@/common/decorators/to-boolean.decorator';
+import { ToBoolean } from '../../common/decorators/to-boolean.decorator';
 
 export class CreateServiceDto {
   @ApiProperty({

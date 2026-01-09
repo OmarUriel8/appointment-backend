@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Max, Min, IsNumber } from 'class-validator';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
 export class TestimonialDto {
   @ApiProperty({

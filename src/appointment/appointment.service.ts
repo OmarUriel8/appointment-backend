@@ -10,10 +10,10 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Appointment } from './entities/appointment.entity';
 import { LessThan, MoreThan, Not, Raw, Repository } from 'typeorm';
-import { User } from 'src/user/entities/user.entity';
+
 import { AppointmentStatus } from './enum/appointment-status.enum';
 import { ChangeStatusAppointmentDto } from './dto/change-status-appointment.dto';
-import { ServiceService } from 'src/service/service.service';
+
 import {
   addMinutes,
   generateSlots,
@@ -21,10 +21,8 @@ import {
   toLocalDate,
   toSeconds,
   validateNotPast,
-} from 'src/utils';
-import { EmployeeSchedule } from 'src/employee-schedule/entities/employee-schedule.entity';
-import { UserService } from 'src/user/user.service';
-import { UserRole } from 'src/user/enums/user-role.enum';
+} from '../utils';
+
 import { isUUID } from 'class-validator';
 import { CancelAppointmentDto } from './dto/cancel-appointment.dto';
 import { TestimonialDto } from './dto/testimonial.dto';
@@ -34,6 +32,11 @@ import {
   PaginationAptDto,
   ScoreAppointmentDto,
 } from './dto';
+import { ServiceService } from '../service/service.service';
+import { UserService } from '../user/user.service';
+import { EmployeeSchedule } from '../employee-schedule/entities/employee-schedule.entity';
+import { User } from '../user/entities/user.entity';
+import { UserRole } from '../user/enums/user-role.enum';
 
 @Injectable()
 export class AppointmentService {

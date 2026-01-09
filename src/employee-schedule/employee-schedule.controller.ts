@@ -10,10 +10,10 @@ import {
 } from '@nestjs/common';
 import { EmployeeScheduleService } from './employee-schedule.service';
 
-import { Auth } from '@/auth/decorators';
-import { UserRole } from '@/user/enums/user-role.enum';
 import { CreateEmployeeScheduleDto, UpdateEmployeeScheduleDto } from './dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UserRole } from '../user/enums/user-role.enum';
+import { Auth } from '../auth/decorators';
 
 @ApiTags('Employee Schedule')
 @Controller('employee-schedule')

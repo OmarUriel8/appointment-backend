@@ -1,8 +1,8 @@
-import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { AppointmentStatus } from '../enum/appointment-status.enum';
 import { IsDate, IsIn, IsInt, IsOptional, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 
 export class PaginationAptDto extends PaginationDto {
   @ApiProperty({
