@@ -47,11 +47,18 @@ async function bootstrap() {
   // ? No genera todo el mapea se deben de configurar controllers y dtos
   SwaggerModule.setup('api', app, documentFactory);
 
-  if (process.env.VERCEL !== '1') {
-    const port = process.env.PORT ?? 3000;
-    await app.listen(port);
-    logger.log(`API running on port ${port}`);
-    logger.log(`Zona horaria ${process.env.TZ} ${new Date()}`);
+  // SI ES VERCEL: Inicializamos y retornamos la instancia de Express
+  if (process.env.VERCEL === '1') {
+    await app.init();
+    return app.getHttpAdapter().getInstance();
   }
+
+  // SI ES LOCAL: Escuchamos en el puerto normal
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+  logger.log(`API running on port ${port}`);
+  logger.log(`Zona horaria ${process.env.TZ} ${new Date()}`);
 }
-bootstrap();
+//bootstrap();
+
+export default bootstrap();
