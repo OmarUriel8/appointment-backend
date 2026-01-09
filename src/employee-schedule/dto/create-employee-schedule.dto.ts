@@ -9,7 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { ToBoolean } from 'src/common/decorators/to-boolean.decorator';
+import { ToBoolean } from '@/common/decorators/to-boolean.decorator';
 
 export class CreateEmployeeScheduleDto {
   @ApiProperty({

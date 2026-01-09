@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
-import { Auth, GetUser } from 'src/auth/decorators';
-import { UserRole } from 'src/user/enums/user-role.enum';
-import { User } from 'src/user/entities/user.entity';
+import { Auth, GetUser } from '@/auth/decorators';
+import { UserRole } from '@/user/enums/user-role.enum';
+import { User } from '@/user/entities/user.entity';
 import { DashboardDto } from './dto/dashboard.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
-import { ToBoolean } from 'src/common/decorators/to-boolean.decorator';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { ToBoolean } from '@/common/decorators/to-boolean.decorator';
+import { PaginationDto } from '@/common/dto/pagination.dto';
 
 export class PaginationServDto extends PaginationDto {
   @ApiProperty({

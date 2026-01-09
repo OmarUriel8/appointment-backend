@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto, RegisterUserDto } from './dto';
-import { User } from 'src/user/entities/user.entity';
+import { User } from '@/user/entities/user.entity';
 import { Auth, GetUser } from './decorators';
-import { UserRole } from 'src/user/enums/user-role.enum';
+import { UserRole } from '@/user/enums/user-role.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Auth')

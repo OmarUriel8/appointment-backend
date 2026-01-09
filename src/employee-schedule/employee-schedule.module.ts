@@ -3,8 +3,8 @@ import { EmployeeScheduleService } from './employee-schedule.service';
 import { EmployeeScheduleController } from './employee-schedule.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeSchedule } from './entities/employee-schedule.entity';
-import { UserModule } from 'src/user/user.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { UserModule } from '@/user/user.module';
+import { AuthModule } from '@/auth/auth.module';
 
 @Module({
   controllers: [EmployeeScheduleController],

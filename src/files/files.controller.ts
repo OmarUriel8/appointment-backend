@@ -12,8 +12,8 @@ import { FilesService } from './files.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from './helpers/fileFilter';
 import { RemovefileDto } from './dto';
-import { Auth } from 'src/auth/decorators';
-import { UserRole } from 'src/user/enums/user-role.enum';
+import { Auth } from '@/auth/decorators';
+import { UserRole } from '@/user/enums/user-role.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Files')

@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { UserRole } from 'src/user/enums/user-role.enum';
+import { UserRole } from '@/user/enums/user-role.enum';
 
 export const META_ROLES = 'roles'; // ? Es la clave que se utiliza para almacenar los metadatos de los roles.
 /**

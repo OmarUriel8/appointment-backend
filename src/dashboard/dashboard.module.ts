@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { DashboardController } from './dashboard.controller';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthModule } from '@/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Appointment } from 'src/appointment/entities/appointment.entity';
+import { Appointment } from '@/appointment/entities/appointment.entity';
 
 @Module({
   controllers: [DashboardController],
