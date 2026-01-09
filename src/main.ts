@@ -1,3 +1,5 @@
+import 'tsconfig-paths/register';
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
