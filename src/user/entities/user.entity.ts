@@ -9,8 +9,8 @@ import {
   OneToMany,
 } from 'typeorm';
 import { UserRole } from '../enums/user-role.enum';
-import { EmployeeSchedule } from 'src/employee-schedule/entities/employee-schedule.entity';
-import { Appointment } from 'src/appointment/entities/appointment.entity';
+import { EmployeeSchedule } from '@/employee-schedule/entities/employee-schedule.entity';
+import { Appointment } from '@/appointment/entities/appointment.entity';
 
 @Entity({
   name: 'user',

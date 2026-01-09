@@ -18,7 +18,7 @@ import {
   UpdatePasswordDto,
 } from './dto';
 import { UserRole } from './enums/user-role.enum';
-import { Auth, GetUser } from 'src/auth/decorators';
+import { Auth, GetUser } from '@/auth/decorators';
 import { User } from './entities/user.entity';
 
 @ApiTags('User')

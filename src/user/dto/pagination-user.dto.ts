@@ -1,7 +1,7 @@
 import { IsBoolean, IsIn, IsOptional } from 'class-validator';
-import { UserRole } from 'src/user/enums/user-role.enum';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { ToBoolean } from 'src/common/decorators/to-boolean.decorator';
+import { UserRole } from '@/user/enums/user-role.enum';
+import { PaginationDto } from '@/common/dto/pagination.dto';
+import { ToBoolean } from '@/common/decorators/to-boolean.decorator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PaginationUserDto extends PaginationDto {
