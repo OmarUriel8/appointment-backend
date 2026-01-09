@@ -24,5 +24,8 @@
     "module": "CommonJS", 
     "moduleResolution": "Node",
     "target": "ES2021",
+    "paths": {
+      "@/*": ["src/*"]
+    },
   }
 }
