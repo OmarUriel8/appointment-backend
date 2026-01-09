@@ -29,7 +29,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
       extra: {
         // Esto le dice a PG que use esta zona horaria para formatear los timestamps
         // al devolverlos al driver de Node.js.
-        timezone: process.env.TZ ?? 'UTC',
+        timezone: process.env.APP_TZ ?? 'UTC',
       },
     }),
     ServiceModule,
